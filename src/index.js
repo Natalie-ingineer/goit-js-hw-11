@@ -5,27 +5,27 @@ const API_KEY = '41079066-0341c17d8bd684537c8a66e3e';
 
 let page = 1;
 
-const queryParams = {
-  key: API_KEY,
-  q: '',
-  image_type: 'photo',
-  orientation: 'horizontal',
-  safesearch: true,
-  page: page,
-  per_page: 40,
-};
+// const queryParams = {
+//   key: API_KEY,
+//   q: `${searchAnimal}`,
+//   image_type: 'photo',
+//   orientation: 'horizontal',
+//   safesearch: true,
+//   page: page,
+//   per_page: 40,
+// };
 
-axios
-  .get(BASE_URL, { params: queryParams })
-  .then(response => {
-    console.log(response.data);
-  })
-  .catch(error => {
-    console.log(error);
-    console.log(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-  });
+// axios
+//   .get(BASE_URL, { params: queryParams })
+//   .then(response => {
+//     console.log(response.data);
+//   })
+//   .catch(error => {
+//     console.log(error);
+//     console.log(
+//       'Sorry, there are no images matching your search query. Please try again.'
+//     );
+//   });
 
 const searchForm = document.querySelector('.search-form');
 const btnSubmit = document.querySelector('button');
@@ -39,14 +39,37 @@ btnSubmit.addEventListener('click', handlerSubmit);
 async function handlerSearch(event) {
   event.preventDefault();
 
-  const data = new FormData(event.currentTarget);
-  const arr = data
-    .getAll('animal')
-    .filter(item => item)
-    .map(item => item.trim());
+  const searchAnimal = event.currentTarget.searchQuery.value;
+
+  const queryParams = {
+    key: API_KEY,
+    q: `${searchAnimal}`,
+    image_type: 'photo',
+    orientation: 'horizontal',
+    safesearch: true,
+    page: page,
+    per_page: 40,
+  };
+
+  axios
+    .get(BASE_URL, { params: queryParams })
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.log(error);
+      console.log(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    });
+
+  // const arr = searchAnimal
+  //   .getAll('animal')
+  //   .filter(item => item)
+  //   .map(item => item.trim());
 
   try {
-    const animalsService = await getAnimals(arr);
+    const animalsService = await getAnimals(searchAnimal);
     divGallery.innerHTML = createMarkup(animalsService);
   } catch (e) {
     console.log(e);
@@ -55,11 +78,11 @@ async function handlerSearch(event) {
   }
 }
 
-async function getAnimals(arr) {
-  const resps = arr.map(async animal => {
+async function getAnimals(searchAnimal) {
+  const resps = searchAnimal.map(async animal => {
     const queryParams = new URLSearchParams({
       key: API_KEY,
-      q: animal,
+      q: `${searchAnimal}`,
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: true,
@@ -77,8 +100,8 @@ async function getAnimals(arr) {
   return Promise.all(resps);
 }
 
-function createMarkup(arr) {
-  return arr
+function createMarkup(searchAnimal) {
+  return searchAnimal
     .map(
       ({
         webformatURL,
