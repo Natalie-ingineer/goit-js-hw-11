@@ -31,90 +31,96 @@ const btnSubmit = document.querySelector('button');
 const loadMore = document.querySelector('.load-more');
 const divGallery = document.querySelector('.gallery');
 
-// searchForm.addEventListener('submit', handlerSearch);
-// btnSubmit.addEventListener('click', handlerSubmit);
+searchForm.addEventListener('submit', handlerSearch);
+btnSubmit.addEventListener('click', handlerSubmit);
 // loadMore.addEventListener('click', handlerLoadMore);
 
-// function handlerSearch(event) {
-//   event.preventDefault();
+function handlerSearch(event) {
+  event.preventDefault();
 
-//   const data = new FormData(event.currentTarget);
-//   const arr = data
-//     .getAll('animal')
-//     .filter(item => item)
-//     .map(item => item.trim());
-//   getAnimals(arr)
-//     .then(async resp => {
-//       const animals = resp.map(({ origin }) => origin[0]);
-//       const animalsService = await getAnimals(animals);
-//       divGallery.innerHTML = createMarkup(animalsService);
-//     })
-//     .catch(e => console.log(e))
-//     .finally(() => searchForm.reset());
-// }
+  const data = new FormData(event.currentTarget);
+  const arr = data
+    .getAll('animal')
+    .filter(item => item)
+    .map(item => item.trim());
+  getAnimals(arr)
+    .then(async resp => {
+      // const animals = resp.map(
+      //   ({
+      //     webformatURL,
+      //     largeImageURL,
+      //     tags,
+      //     likes,
+      //     views,
+      //     comments,
+      //     downloads,
+      //   }) => [...arg[0]]
+      // );
+      const animalsService = await getAnimals(resp);
+      divGallery.innerHTML = createMarkup(animalsService);
+    })
+    .catch(e => console.log(e))
+    .finally(() => searchForm.reset());
+}
 
-// async function getAnimals(arr) {
-//   const resps = arr.map(async animal => {
-//     const queryParams = new URLSearchParams({
-//       key: API_KEY,
-//       q: animal,
-//       image_type: 'photo',
-//       orientation: 'horizontal',
-//       safesearch: 'true',
-//       page: page,
-//       per_page: 40,
-//     });
+async function getAnimals(arr) {
+  const resps = arr.map(async animal => {
+    const queryParams = new URLSearchParams({
+      key: API_KEY,
+      q: animal,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: 'true',
+      page: page,
+      per_page: 40,
+    });
 
-//     const resp = await fetch(`${BASE_URL}?${queryParams}&${animal}`);
-//     if (!resp.ok) {
-//       throw new Error();
-//     }
-//     return await resp.json();
-//   });
+    const resp = await fetch(`${BASE_URL}?${queryParams}&${animal}`);
+    if (!resp.ok) {
+      throw new Error();
+    }
+    return await resp.json();
+  });
 
-//   const data = await Promise.allSettled(resps);
-//   const animalObj = data
-//     .filter(({ status }) => status === 'fulfilled')
-//     .map(({ value }) => value[0]);
+  const data = await Promise.allSettled(resps);
+  const animalObj = data
+    .filter(({ status }) => status === 'fulfilled')
+    .map(({ hits }) => hits[0]);
 
-//   return animalObj;
-// }
+  return animalObj;
+}
 
-// async function getAnimals(arr) {
-//   const resps = arr.map(async item => {
-//     const resp = await fetch(`${BASE_URL}?${queryParams}&${item}`);
-//     if (!resp.ok) {
-//       throw new Error();
-//     }
-//     return await resp.json();
-//   });
-//   const data = await Promise.allSettled(resps);
-//   const animalObj = data
-//     .filter(({ status }) => status === 'fulfilled')
-//     .map(({ value }) => value[0]);
+function createMarkup(arr) {
+  return arr
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `<div class="photo-card">
+    <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+    <div class="info">
+      <p class="info-item">
+        <b>Likes'${likes}'</b>
+      </p>
+      <p class="info-item">
+        <b>Views'${views}'</b>
+      </p>
+      <p class="info-item">
+        <b>Comments'${comments}'</b>
+      </p>
+      <p class="info-item">
+        <b>Downloads'${downloads}'</b>
+      </p>
+    </div>
+  </div>;`
+    )
+    .join('');
+}
 
-//   return animalObj;
-// }
-
-// function createMarkup() {
-//   `<div class="photo-card">
-//     <img src="" alt="" loading="lazy" />
-//     <div class="info">
-//       <p class="info-item">
-//         <b>Likes</b>
-//       </p>
-//       <p class="info-item">
-//         <b>Views</b>
-//       </p>
-//       <p class="info-item">
-//         <b>Comments</b>
-//       </p>
-//       <p class="info-item">
-//         <b>Downloads</b>
-//       </p>
-//     </div>
-//   </div>;`;
-// }
-
-// function handlerSubmit() {}
+function handlerSubmit() {}
 // function handlerLoadMore() {}
