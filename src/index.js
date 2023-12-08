@@ -21,6 +21,7 @@ axios
     console.log(response.data);
   })
   .catch(error => {
+    console.log(error);
     console.log(
       'Sorry, there are no images matching your search query. Please try again.'
     );
@@ -35,7 +36,7 @@ searchForm.addEventListener('submit', handlerSearch);
 btnSubmit.addEventListener('click', handlerSubmit);
 // loadMore.addEventListener('click', handlerLoadMore);
 
-function handlerSearch(event) {
+async function handlerSearch(event) {
   event.preventDefault();
 
   const data = new FormData(event.currentTarget);
@@ -43,24 +44,15 @@ function handlerSearch(event) {
     .getAll('animal')
     .filter(item => item)
     .map(item => item.trim());
-  getAnimals(arr)
-    .then(async resp => {
-      // const animals = resp.map(
-      //   ({
-      //     webformatURL,
-      //     largeImageURL,
-      //     tags,
-      //     likes,
-      //     views,
-      //     comments,
-      //     downloads,
-      //   }) => [...arg[0]]
-      // );
-      const animalsService = await getAnimals(resp);
-      divGallery.innerHTML = createMarkup(animalsService);
-    })
-    .catch(e => console.log(e))
-    .finally(() => searchForm.reset());
+
+  try {
+    const animalsService = await getAnimals(arr);
+    divGallery.innerHTML = createMarkup(animalsService);
+  } catch (e) {
+    console.log(e);
+  } finally {
+    searchForm.reset();
+  }
 }
 
 async function getAnimals(arr) {
@@ -70,24 +62,19 @@ async function getAnimals(arr) {
       q: animal,
       image_type: 'photo',
       orientation: 'horizontal',
-      safesearch: 'true',
+      safesearch: true,
       page: page,
       per_page: 40,
     });
 
-    const resp = await fetch(`${BASE_URL}?${queryParams}&${animal}`);
+    const resp = await fetch(`${BASE_URL}?${queryParams}`);
     if (!resp.ok) {
       throw new Error();
     }
     return await resp.json();
   });
 
-  const data = await Promise.allSettled(resps);
-  const animalObj = data
-    .filter(({ status }) => status === 'fulfilled')
-    .map(({ hits }) => hits[0]);
-
-  return animalObj;
+  return Promise.all(resps);
 }
 
 function createMarkup(arr) {
@@ -124,3 +111,92 @@ function createMarkup(arr) {
 
 function handlerSubmit() {}
 // function handlerLoadMore() {}
+
+// const data = new FormData(event.currentTarget);
+//   const arr = data
+//     .getAll('animal')
+//     .filter(item => item)
+//     .map(item => item.trim());
+//   getAnimals(arr)
+//     .then(async resp => {
+//       // const animals = resp.map(
+//       //   ({
+//       //     webformatURL,
+//       //     largeImageURL,
+//       //     tags,
+//       //     likes,
+//       //     views,
+//       //     comments,
+//       //     downloads,
+//       //   }) => [...arg[0]]
+//       // );
+//       const animalsService = await Promise.all(resp);
+//       divGallery.innerHTML = createMarkup(animalsService);
+//     })
+//     .catch(e => console.log(e))
+//     .finally(() => searchForm.reset());
+// }
+
+// async function getAnimals(arr) {
+//   const resps = arr.map(async animal => {
+//     const queryParams = new URLSearchParams({
+//       key: API_KEY,
+//       q: animal,
+//       image_type: 'photo',
+//       orientation: 'horizontal',
+//       safesearch: true,
+//       page: page,
+//       per_page: 40,
+//     });
+
+//     const resp = await fetch(`${BASE_URL}?${queryParams}`);
+//     if (!resp.ok) {
+//       throw new Error();
+//     }
+//     return await resp.json();
+//   });
+
+//   // const data = await Promise.allSettled(resps);
+//   // const animalObj = data
+//   //   .filter(({ status }) => status === 'fulfilled')
+//   //   .map(({ hits }) => hits[0]);
+
+//   // return animalObj;
+
+//   return resps;
+// }
+
+// function createMarkup(arr) {
+//   return arr
+//     .map(
+//       ({
+//         webformatURL,
+//         largeImageURL,
+//         tags,
+//         likes,
+//         views,
+//         comments,
+//         downloads,
+//       }) => `<div class="photo-card">
+//     <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+//     <div class="info">
+//       <p class="info-item">
+//         <b>Likes'${likes}'</b>
+//       </p>
+//       <p class="info-item">
+//         <b>Views'${views}'</b>
+//       </p>
+//       <p class="info-item">
+//         <b>Comments'${comments}'</b>
+//       </p>
+//       <p class="info-item">
+//         <b>Downloads'${downloads}'</b>
+//       </p>
+//     </div>
+//   </div>;`
+//     )
+//     .join('');
+// }
+
+// function handlerSubmit() {}
+// // function handlerLoadMore() {}
