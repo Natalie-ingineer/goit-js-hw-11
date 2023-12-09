@@ -1,107 +1,114 @@
-const axios = require('axios').default;
+import NewsApiService from './animal-api';
 
-const BASE_URL = 'https://pixabay.com/api/';
-const API_KEY = '41079066-0341c17d8bd684537c8a66e3e';
+// import SlimSelect from 'slim-select';
 
-let page = 1;
+// import '/node_modules/slim-select/dist/slimselect.css';
 
-// const queryParams = {
-//   key: API_KEY,
-//   q: `${searchAnimal}`,
-//   image_type: 'photo',
-//   orientation: 'horizontal',
-//   safesearch: true,
-//   page: page,
-//   per_page: 40,
-// };
+// import '/src/loader.css';
 
-// axios
-//   .get(BASE_URL, { params: queryParams })
-//   .then(response => {
-//     console.log(response.data);
-//   })
-//   .catch(error => {
-//     console.log(error);
-//     console.log(
-//       'Sorry, there are no images matching your search query. Please try again.'
-//     );
-//   });
+// import Notiflix from 'notiflix';
+
+// import Notiflix from 'notiflix/dist/notiflix-aio-3.2.6.min.js';
+
+// Notiflix.Notify.init({
+//   width: '280px',
+//   position: 'right-top', // 'right-top' - 'right-bottom' - 'left-top' - 'left-bottom' - 'center-top' - 'center-bottom' - 'center-center'
+//   distance: '10px',
+//   opacity: 1,
+//   borderRadius: '5px',
+//   rtl: false,
+//   timeout: 3000,
+//   messageMaxLength: 110,
+//   backOverlay: false,
+//   backOverlayColor: 'rgba(0,0,0,0.5)',
+//   plainText: true,
+//   showOnlyTheLastOne: false,
+//   clickToClose: false,
+//   pauseOnHover: true,
+
+//   ID: 'NotiflixNotify',
+//   className: 'notiflix-notify',
+//   zindex: 4001,
+//   fontFamily: 'Quicksand',
+//   fontSize: '13px',
+//   cssAnimation: true,
+//   cssAnimationDuration: 400,
+//   cssAnimationStyle: 'fade', // 'fade' - 'zoom' - 'from-right' - 'from-top' - 'from-bottom' - 'from-left'
+//   closeButton: false,
+//   useIcon: true,
+//   useFontAwesome: false,
+//   fontAwesomeIconStyle: 'basic', // 'basic' - 'shadow'
+//   fontAwesomeIconSize: '34px',
+
+//   failure: {
+//     background: '#ff5549',
+//     textColor: '#fff',
+//     childClassName: 'notiflix-notify-failure',
+//     notiflixIconColor: 'rgba(0,0,0,0.2)',
+//     fontAwesomeClassName: 'fas fa-times-circle',
+//     fontAwesomeIconColor: 'rgba(0,0,0,0.2)',
+//     backOverlayColor: 'rgba(255,85,73,0.2)',
+//   },
+// });
 
 const searchForm = document.querySelector('.search-form');
 const btnSubmit = document.querySelector('button');
 const loadMore = document.querySelector('.load-more');
 const divGallery = document.querySelector('.gallery');
 
+const newsApiService = new NewsApiService();
+
 searchForm.addEventListener('submit', handlerSearch);
-btnSubmit.addEventListener('click', handlerSubmit);
-// loadMore.addEventListener('click', handlerLoadMore);
+loadMore.addEventListener('click', onLoadMore);
+let totalHits = 500;
+let hits = 0;
 
-async function handlerSearch(event) {
-  event.preventDefault();
+loadMore.style.display = 'none';
+divGallery.style.display = 'flex';
+divGallery.style.flexWrap = 'wrap';
 
-  const searchAnimal = event.currentTarget.searchQuery.value;
+// newsApiService.fetchHits().then(totalHits => console.log(totalHits));
 
-  const queryParams = {
-    key: API_KEY,
-    q: `${searchAnimal}`,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    page: page,
-    per_page: 40,
-  };
+function handlerSearch(e) {
+  e.preventDefault();
 
-  axios
-    .get(BASE_URL, { params: queryParams })
-    .then(response => {
-      console.log(response.data);
-    })
-    .catch(error => {
-      console.log(error);
-      console.log(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    });
+  newsApiService.animal = e.currentTarget.searchQuery.value;
 
-  // const arr = searchAnimal
-  //   .getAll('animal')
-  //   .filter(item => item)
-  //   .map(item => item.trim());
-
-  try {
-    const animalsService = await getAnimals(searchAnimal);
-    divGallery.innerHTML = createMarkup(animalsService);
-  } catch (e) {
-    console.log(e);
-  } finally {
-    searchForm.reset();
+  if (newsApiService.animal === '') {
+    return alert('Oops!');
   }
-}
 
-async function getAnimals(searchAnimal) {
-  const resps = searchAnimal.map(async animal => {
-    const queryParams = new URLSearchParams({
-      key: API_KEY,
-      q: `${searchAnimal}`,
-      image_type: 'photo',
-      orientation: 'horizontal',
-      safesearch: true,
-      page: page,
-      per_page: 40,
-    });
+  newsApiService.resetPage();
+  newsApiService.fetchHits().then(hits => {
+    clearDivContainer();
+    createMarkupAnimals(hits);
 
-    const resp = await fetch(`${BASE_URL}?${queryParams}`);
-    if (!resp.ok) {
-      throw new Error();
+    if (hits.length < totalHits) {
+      onLoaderVisible();
+    } else if (hits.length === totalHits) {
+      onLoaderHidden();
     }
-    return await resp.json();
   });
 
-  return Promise.all(resps);
+  // newsApiService.fetchPegs().then(totalHits => {
+  //   console.log(totalHits);
+  //   if (hits.length < totalHits) {
+  //     onLoaderVisible();
+  //   }
+  //   //   onLoaderHidden();
+  //   //   return alert("We're sorry, but you've reached the end of search results!");
+  // });
+}
+// btnSubmit.addEventListener('click', handlerSubmit);
+
+function onLoadMore() {
+  newsApiService.fetchHits().then(createMarkupAnimals);
 }
 
-function createMarkup(searchAnimal) {
-  return searchAnimal
+function renderMarkup(hits) {
+  // const animalHits = hits[0];
+
+  return hits
     .map(
       ({
         webformatURL,
@@ -112,7 +119,7 @@ function createMarkup(searchAnimal) {
         comments,
         downloads,
       }) => `<div class="photo-card">
-    <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+    <img src="${webformatURL}" alt="${tags}" width = "300" loading="lazy" />
     <div class="info">
       <p class="info-item">
         <b>Likes'${likes}'</b>
@@ -127,99 +134,40 @@ function createMarkup(searchAnimal) {
         <b>Downloads'${downloads}'</b>
       </p>
     </div>
-  </div>;`
+  </div>`
     )
     .join('');
 }
 
-function handlerSubmit() {}
-// function handlerLoadMore() {}
+function createMarkupAnimals(hits) {
+  divGallery.insertAdjacentHTML('beforeend', renderMarkup(hits));
+}
 
-// const data = new FormData(event.currentTarget);
-//   const arr = data
-//     .getAll('animal')
-//     .filter(item => item)
-//     .map(item => item.trim());
-//   getAnimals(arr)
-//     .then(async resp => {
-//       // const animals = resp.map(
-//       //   ({
-//       //     webformatURL,
-//       //     largeImageURL,
-//       //     tags,
-//       //     likes,
-//       //     views,
-//       //     comments,
-//       //     downloads,
-//       //   }) => [...arg[0]]
-//       // );
-//       const animalsService = await Promise.all(resp);
-//       divGallery.innerHTML = createMarkup(animalsService);
-//     })
-//     .catch(e => console.log(e))
-//     .finally(() => searchForm.reset());
+function clearDivContainer() {
+  divGallery.innerHTML = '';
+}
+
+// ----------------------------------------------------------------------------------
+
+// function createMarkupCat(data) {
+//   const cat = data[0].breeds[0];
+
+//   const { name, description, temperament } = cat;
+
+//   return `
+//   <img src="${data[0].url}" alt="${name}" width="450">
+//   <h2>${name}</h2>
+//   <p>${description}</p>
+//   <p>Temperament: ${temperament}</p>
+//   `;
 // }
 
-// async function getAnimals(arr) {
-//   const resps = arr.map(async animal => {
-//     const queryParams = new URLSearchParams({
-//       key: API_KEY,
-//       q: animal,
-//       image_type: 'photo',
-//       orientation: 'horizontal',
-//       safesearch: true,
-//       page: page,
-//       per_page: 40,
-//     });
+function onLoaderVisible() {
+  loadMore.style.display = 'block';
+  // loadMore.textContent = '';
+}
 
-//     const resp = await fetch(`${BASE_URL}?${queryParams}`);
-//     if (!resp.ok) {
-//       throw new Error();
-//     }
-//     return await resp.json();
-//   });
-
-//   // const data = await Promise.allSettled(resps);
-//   // const animalObj = data
-//   //   .filter(({ status }) => status === 'fulfilled')
-//   //   .map(({ hits }) => hits[0]);
-
-//   // return animalObj;
-
-//   return resps;
-// }
-
-// function createMarkup(arr) {
-//   return arr
-//     .map(
-//       ({
-//         webformatURL,
-//         largeImageURL,
-//         tags,
-//         likes,
-//         views,
-//         comments,
-//         downloads,
-//       }) => `<div class="photo-card">
-//     <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-//     <div class="info">
-//       <p class="info-item">
-//         <b>Likes'${likes}'</b>
-//       </p>
-//       <p class="info-item">
-//         <b>Views'${views}'</b>
-//       </p>
-//       <p class="info-item">
-//         <b>Comments'${comments}'</b>
-//       </p>
-//       <p class="info-item">
-//         <b>Downloads'${downloads}'</b>
-//       </p>
-//     </div>
-//   </div>;`
-//     )
-//     .join('');
-// }
-
-// function handlerSubmit() {}
-// // function handlerLoadMore() {}
+function onLoaderHidden() {
+  loadMore.style.display = 'none';
+  // div.style.display = 'block';
+}
