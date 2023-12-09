@@ -34,6 +34,16 @@ Notiflix.Notify.init({
   fontAwesomeIconStyle: 'basic', // 'basic' - 'shadow'
   fontAwesomeIconSize: '34px',
 
+  success: {
+    background: '#32c682',
+    textColor: '#fff',
+    childClassName: 'notiflix-notify-success',
+    notiflixIconColor: 'rgba(0,0,0,0.2)',
+    fontAwesomeClassName: 'fas fa-check-circle',
+    fontAwesomeIconColor: 'rgba(0,0,0,0.2)',
+    backOverlayColor: 'rgba(50,198,130,0.2)',
+  },
+
   failure: {
     background: '#ff5549',
     textColor: '#fff',
@@ -54,7 +64,7 @@ const newsApiService = new NewsApiService();
 
 searchForm.addEventListener('submit', handlerSearch);
 loadMore.addEventListener('click', onLoadMore);
-let totalHits = 500;
+// let totalHits = 40;
 let hits = 0;
 
 loadMore.style.display = 'none';
@@ -89,9 +99,11 @@ async function handlerSearch(e) {
     }
     clearDivContainer();
     createMarkupAnimals(hits);
+    totalHits = hits.length;
+    Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
     onLoaderVisible();
   } catch (error) {
-    console.log('Error fetching hits:', error.name);
+    // console.log('Error fetching hits:', error.name);
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
@@ -101,6 +113,8 @@ async function handlerSearch(e) {
 async function onLoadMore() {
   try {
     const newHits = await newsApiService.fetchHits();
+    const newHitsCount = newHits.length;
+    totalHits += newHitsCount;
 
     if (newHits.length === 0) {
       onLoaderHidden();

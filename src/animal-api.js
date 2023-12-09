@@ -7,6 +7,7 @@ export default class NewsApiService {
   constructor() {
     this.searchAnimal = '';
     this.page = 1;
+    this.per_page = 40;
   }
 
   async fetchHits() {
@@ -18,7 +19,7 @@ export default class NewsApiService {
         orientation: 'horizontal',
         safesearch: true,
         page: `${this.page}`,
-        per_page: 40,
+        per_page: `${this.per_page}`,
       };
 
       const response = await axios.get(BASE_URL, { params: queryParams });
@@ -32,6 +33,11 @@ export default class NewsApiService {
 
   incrementPage() {
     this.page += 1;
+    this.per_page += 40;
+  }
+
+  getTotalHits() {
+    return totalHits;
   }
 
   resetPage() {
