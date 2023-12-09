@@ -68,8 +68,7 @@ async function handlerSearch(e) {
 
   if (
     newsApiService.animal.trim() === '' ||
-    !/^[a-zA-Z]+$/.test(newsApiService.animal) ||
-    SyntaxError
+    !/^[a-zA-Z]+$/.test(newsApiService.animal)
   ) {
     return alert('Oops!');
   }
@@ -79,11 +78,15 @@ async function handlerSearch(e) {
 
   try {
     const hits = await newsApiService.fetchHits();
+
+    if (hits.length === 0) {
+      onLoaderHidden();
+      return;
+    }
     clearDivContainer();
     createMarkupAnimals(hits);
   } catch (error) {
-    console.error('Error fetching hits:', error);
-    // if (!(err instanceof SyntaxError))
+    console.log('Error fetching hits:', error);
     alert(
       'An error occurred while fetching search results. Please try again later.'
     );
