@@ -1,11 +1,5 @@
 import NewsApiService from './animal-api';
 
-// import SlimSelect from 'slim-select';
-
-// import '/node_modules/slim-select/dist/slimselect.css';
-
-// import '/src/loader.css';
-
 // import Notiflix from 'notiflix';
 
 // import Notiflix from 'notiflix/dist/notiflix-aio-3.2.6.min.js';
@@ -67,9 +61,7 @@ loadMore.style.display = 'none';
 divGallery.style.display = 'flex';
 divGallery.style.flexWrap = 'wrap';
 
-// newsApiService.fetchHits().then(totalHits => console.log(totalHits));
-
-function handlerSearch(e) {
+async function handlerSearch(e) {
   e.preventDefault();
 
   newsApiService.animal = e.currentTarget.searchQuery.value;
@@ -78,36 +70,45 @@ function handlerSearch(e) {
     return alert('Oops!');
   }
 
+  onLoaderVisible();
   newsApiService.resetPage();
-  newsApiService.fetchHits().then(hits => {
+
+  try {
+    const hits = await newsApiService.fetchHits();
     clearDivContainer();
     createMarkupAnimals(hits);
-
-    if (hits.length < totalHits) {
-      onLoaderVisible();
-    } else if (hits.length === totalHits) {
-      onLoaderHidden();
-    }
-  });
-
-  // newsApiService.fetchPegs().then(totalHits => {
-  //   console.log(totalHits);
-  //   if (hits.length < totalHits) {
-  //     onLoaderVisible();
-  //   }
-  //   //   onLoaderHidden();
-  //   //   return alert("We're sorry, but you've reached the end of search results!");
-  // });
+  } catch (error) {
+    console.error('Error fetching hits:', error);
+  }
 }
-// btnSubmit.addEventListener('click', handlerSubmit);
 
-function onLoadMore() {
-  newsApiService.fetchHits().then(createMarkupAnimals);
+async function onLoadMore() {
+  try {
+    const newHits = await newsApiService.fetchHits();
+
+    if (newHits.length === 0) {
+      onLoaderHidden();
+      return;
+    }
+
+    createMarkupAnimals(newHits);
+    hits += newHits.length;
+
+    if (hits < totalHits) {
+      onLoaderVisible();
+    } else {
+      onLoaderHidden();
+      divGallery.insertAdjacentHTML(
+        'beforeend',
+        `<p>We're sorry, but you've reached the end of search results.</p>`
+      );
+    }
+  } catch (error) {
+    console.error('Error fetching hits:', error);
+  }
 }
 
 function renderMarkup(hits) {
-  // const animalHits = hits[0];
-
   return hits
     .map(
       ({
@@ -147,27 +148,120 @@ function clearDivContainer() {
   divGallery.innerHTML = '';
 }
 
-// ----------------------------------------------------------------------------------
-
-// function createMarkupCat(data) {
-//   const cat = data[0].breeds[0];
-
-//   const { name, description, temperament } = cat;
-
-//   return `
-//   <img src="${data[0].url}" alt="${name}" width="450">
-//   <h2>${name}</h2>
-//   <p>${description}</p>
-//   <p>Temperament: ${temperament}</p>
-//   `;
-// }
-
 function onLoaderVisible() {
   loadMore.style.display = 'block';
-  // loadMore.textContent = '';
 }
 
 function onLoaderHidden() {
   loadMore.style.display = 'none';
-  // div.style.display = 'block';
 }
+
+// -------------------------------------------------------------------------------------
+// const searchForm = document.querySelector('.search-form');
+// const loadMore = document.querySelector('.load-more');
+// const divGallery = document.querySelector('.gallery');
+
+// const newsApiService = new NewsApiService();
+
+// searchForm.addEventListener('submit', handlerSearch);
+// loadMore.addEventListener('click', onLoadMore);
+// let totalHits = 500;
+// let hits = 0;
+
+// loadMore.style.display = 'none';
+// divGallery.style.display = 'flex';
+// divGallery.style.flexWrap = 'wrap';
+
+// async function handlerSearch(e) {
+//   e.preventDefault();
+
+//   newsApiService.animal = e.currentTarget.searchQuery.value;
+
+//   if (newsApiService.animal === '') {
+//     return alert('Oops!');
+//   }
+
+//   onLoaderVisible();
+//   newsApiService.resetPage();
+
+//   try {
+//     const hits = await newsApiService.fetchHits();
+//     clearDivContainer();
+//     createMarkupAnimals(hits);
+//   } catch (error) {
+//     console.error('Error fetching hits:', error);
+//   }
+// }
+
+// async function onLoadMore() {
+//   try {
+//     const newHits = await newsApiService.fetchHits();
+
+//     if (newHits.length === 0) {
+//       onLoaderHidden();
+//       return;
+//     }
+
+//     createMarkupAnimals(newHits);
+//     hits += newHits.length;
+
+//     if (hits < totalHits) {
+//       onLoaderVisible();
+//     } else {
+//       onLoaderHidden();
+//       divGallery.insertAdjacentHTML(
+//         'beforeend',
+//         `<p>We're sorry, but you've reached the end of search results.</p>`
+//       );
+//     }
+//   } catch (error) {
+//     console.error('Error fetching more hits:', error);
+//   }
+// }
+
+// function renderMarkup(hits) {
+//   return hits
+//     .map(
+//       ({
+//         webformatURL,
+//         tags,
+//         likes,
+//         views,
+//         comments,
+//         downloads,
+//       }) => `<div class="photo-card">
+//     <img src="${webformatURL}" alt="${tags}" width="300" loading="lazy" />
+//     <div class="info">
+//       <p class="info-item">
+//         <b>Likes'${likes}'</b>
+//       </p>
+//       <p class="info-item">
+//         <b>Views'${views}'</b>
+//       </p>
+//       <p class="info-item">
+//         <b>Comments'${comments}'</b>
+//       </p>
+//       <p class="info-item">
+//         <b>Downloads'${downloads}'</b>
+//       </p>
+//     </div>
+//   </div>`
+//     )
+//     .join('');
+// }
+
+// function createMarkupAnimals(hits) {
+//   divGallery.insertAdjacentHTML('beforeend', renderMarkup(hits));
+// }
+
+// function clearDivContainer() {
+//   divGallery.innerHTML = '';
+// }
+
+// function onLoaderVisible() {
+//   loadMore.style.display = 'block';
+// }
+
+// function onLoaderHidden() {
+//   loadMore.style.display = 'none';
+// }
