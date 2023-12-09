@@ -9,27 +9,6 @@ export default class NewsApiService {
     this.page = 1;
   }
 
-  fetchPegs() {
-    const option = {
-      key: API_KEY,
-      safesearch: true,
-      page: `${this.page}`,
-      per_page: 100,
-    };
-    return axios
-      .get(BASE_URL, { params: option })
-      .then(response => {
-        // console.log(response.data.hits);
-        this.incrementPage();
-        return response.data.totalHits;
-      })
-      .catch(error => {
-        console.log(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      });
-  }
-
   fetchHits() {
     const queryParams = {
       key: API_KEY,
@@ -47,12 +26,11 @@ export default class NewsApiService {
         this.incrementPage();
         return response.data.hits;
       })
-      .catch(error => {
-        console.log(error);
-        console.log(
+      .catch(error =>
+        alert(
           'Sorry, there are no images matching your search query. Please try again.'
-        );
-      });
+        )
+      );
   }
 
   incrementPage() {
@@ -69,14 +47,5 @@ export default class NewsApiService {
 
   set animal(newSearchAnimal) {
     this.searchAnimal = newSearchAnimal;
-  }
-  onLoaderVisible() {
-    loadMore.style.display = 'block';
-    // loadMore.textContent = '';
-  }
-
-  onLoaderHidden() {
-    loadMore.style.display = 'none';
-    // div.style.display = 'block';
   }
 }
