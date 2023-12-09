@@ -33,11 +33,11 @@ export default class NewsApiService {
 
   incrementPage() {
     this.page += 1;
-    this.per_page += 40;
+    // this.per_page += 40;
   }
 
   getTotalHits() {
-    return totalHits;
+    return (this.totalHits = this.per_page);
   }
 
   resetPage() {
