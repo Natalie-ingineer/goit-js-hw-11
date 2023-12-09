@@ -9,23 +9,25 @@ export default class NewsApiService {
     this.page = 1;
   }
 
-  fetchHits() {
-    const queryParams = {
-      key: API_KEY,
-      q: `${this.searchAnimal}`,
-      image_type: 'photo',
-      orientation: 'horizontal',
-      safesearch: true,
-      page: `${this.page}`,
-      per_page: 100,
-    };
-    return axios
-      .get(BASE_URL, { params: queryParams })
-      .then(response => {
-        this.incrementPage();
-        return response.data.hits;
-      })
-      .catch(error => console.log(error));
+  async fetchHits() {
+    try {
+      const queryParams = {
+        key: API_KEY,
+        q: `${this.searchAnimal}`,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: true,
+        page: `${this.page}`,
+        per_page: 40,
+      };
+
+      const response = await axios.get(BASE_URL, { params: queryParams });
+      this.incrementPage();
+      return response.data.hits;
+    } catch (error) {
+      console.error('Error fetching hits:', error);
+      throw error;
+    }
   }
 
   incrementPage() {
