@@ -1,49 +1,49 @@
 import NewsApiService from './animal-api';
 
-// import Notiflix from 'notiflix';
+import Notiflix from 'notiflix';
 
-// import Notiflix from 'notiflix/dist/notiflix-aio-3.2.6.min.js';
+import Notiflix from 'notiflix/dist/notiflix-aio-3.2.6.min.js';
 
-// Notiflix.Notify.init({
-//   width: '280px',
-//   position: 'right-top', // 'right-top' - 'right-bottom' - 'left-top' - 'left-bottom' - 'center-top' - 'center-bottom' - 'center-center'
-//   distance: '10px',
-//   opacity: 1,
-//   borderRadius: '5px',
-//   rtl: false,
-//   timeout: 3000,
-//   messageMaxLength: 110,
-//   backOverlay: false,
-//   backOverlayColor: 'rgba(0,0,0,0.5)',
-//   plainText: true,
-//   showOnlyTheLastOne: false,
-//   clickToClose: false,
-//   pauseOnHover: true,
+Notiflix.Notify.init({
+  width: '280px',
+  position: 'right-top', // 'right-top' - 'right-bottom' - 'left-top' - 'left-bottom' - 'center-top' - 'center-bottom' - 'center-center'
+  distance: '10px',
+  opacity: 1,
+  borderRadius: '5px',
+  rtl: false,
+  timeout: 3000,
+  messageMaxLength: 110,
+  backOverlay: false,
+  backOverlayColor: 'rgba(0,0,0,0.5)',
+  plainText: true,
+  showOnlyTheLastOne: false,
+  clickToClose: false,
+  pauseOnHover: true,
 
-//   ID: 'NotiflixNotify',
-//   className: 'notiflix-notify',
-//   zindex: 4001,
-//   fontFamily: 'Quicksand',
-//   fontSize: '13px',
-//   cssAnimation: true,
-//   cssAnimationDuration: 400,
-//   cssAnimationStyle: 'fade', // 'fade' - 'zoom' - 'from-right' - 'from-top' - 'from-bottom' - 'from-left'
-//   closeButton: false,
-//   useIcon: true,
-//   useFontAwesome: false,
-//   fontAwesomeIconStyle: 'basic', // 'basic' - 'shadow'
-//   fontAwesomeIconSize: '34px',
+  ID: 'NotiflixNotify',
+  className: 'notiflix-notify',
+  zindex: 4001,
+  fontFamily: 'Quicksand',
+  fontSize: '13px',
+  cssAnimation: true,
+  cssAnimationDuration: 400,
+  cssAnimationStyle: 'fade', // 'fade' - 'zoom' - 'from-right' - 'from-top' - 'from-bottom' - 'from-left'
+  closeButton: false,
+  useIcon: true,
+  useFontAwesome: false,
+  fontAwesomeIconStyle: 'basic', // 'basic' - 'shadow'
+  fontAwesomeIconSize: '34px',
 
-//   failure: {
-//     background: '#ff5549',
-//     textColor: '#fff',
-//     childClassName: 'notiflix-notify-failure',
-//     notiflixIconColor: 'rgba(0,0,0,0.2)',
-//     fontAwesomeClassName: 'fas fa-times-circle',
-//     fontAwesomeIconColor: 'rgba(0,0,0,0.2)',
-//     backOverlayColor: 'rgba(255,85,73,0.2)',
-//   },
-// });
+  failure: {
+    background: '#ff5549',
+    textColor: '#fff',
+    childClassName: 'notiflix-notify-failure',
+    notiflixIconColor: 'rgba(0,0,0,0.2)',
+    fontAwesomeClassName: 'fas fa-times-circle',
+    fontAwesomeIconColor: 'rgba(0,0,0,0.2)',
+    backOverlayColor: 'rgba(255,85,73,0.2)',
+  },
+});
 
 const searchForm = document.querySelector('.search-form');
 const btnSubmit = document.querySelector('button');
@@ -71,7 +71,9 @@ async function handlerSearch(e) {
     !/^[a-zA-Z]+$/.test(newsApiService.animal)
   ) {
     onLoaderHidden();
-    return alert('Oops!');
+    return Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
   }
 
   newsApiService.resetPage();
@@ -81,15 +83,17 @@ async function handlerSearch(e) {
 
     if (hits.length === 0) {
       onLoaderHidden();
-      return alert('Oops(((');
+      return Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
     }
     clearDivContainer();
     createMarkupAnimals(hits);
     onLoaderVisible();
   } catch (error) {
     console.log('Error fetching hits:', error.name);
-    alert(
-      'An error occurred while fetching search results. Please try again later.'
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
     );
   }
 }
@@ -116,7 +120,9 @@ async function onLoadMore() {
       );
     }
   } catch (error) {
-    console.error('Error fetching hits:', error);
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
   }
 }
 
