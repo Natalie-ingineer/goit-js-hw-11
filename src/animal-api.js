@@ -22,15 +22,10 @@ export default class NewsApiService {
     return axios
       .get(BASE_URL, { params: queryParams })
       .then(response => {
-        // console.log(response.data.hits);
         this.incrementPage();
         return response.data.hits;
       })
-      .catch(error =>
-        alert(
-          'Sorry, there are no images matching your search query. Please try again.'
-        )
-      );
+      .catch(error => console.log(error));
   }
 
   incrementPage() {

@@ -70,10 +70,10 @@ async function handlerSearch(e) {
     newsApiService.animal.trim() === '' ||
     !/^[a-zA-Z]+$/.test(newsApiService.animal)
   ) {
+    onLoaderHidden();
     return alert('Oops!');
   }
 
-  onLoaderVisible();
   newsApiService.resetPage();
 
   try {
@@ -81,12 +81,13 @@ async function handlerSearch(e) {
 
     if (hits.length === 0) {
       onLoaderHidden();
-      return;
+      return alert('Oops(((');
     }
     clearDivContainer();
     createMarkupAnimals(hits);
+    onLoaderVisible();
   } catch (error) {
-    console.log('Error fetching hits:', error);
+    console.log('Error fetching hits:', error.name);
     alert(
       'An error occurred while fetching search results. Please try again later.'
     );
