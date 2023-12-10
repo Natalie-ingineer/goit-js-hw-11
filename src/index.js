@@ -95,7 +95,6 @@ async function handlerSearch(e) {
       );
     }
 
-    // totalHits = await newsApiService.getTotalHits(); // Оновлення totalHits
     totalHits = newHits.length * page;
     console.log(totalHits);
 
@@ -120,7 +119,6 @@ async function onLoadMore() {
     console.log(totalHits);
 
     if (newHitsCount === 0 || totalHits >= 500) {
-      // onLoaderHidden();
       loadMore.style.display = 'none';
       divGallery.insertAdjacentHTML(
         'beforeend',
@@ -130,20 +128,11 @@ async function onLoadMore() {
     }
 
     createMarkupAnimals(newHits);
-    // hits += newHitsCount;
-    // console.log(hits);
 
     Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
 
     if (newHitsCount < totalHits) {
       onLoaderVisible();
-      // } else if (newHitsCount === totalHits || page === 1) {
-      //   loadMore.style.display = 'none';
-      //   // onLoaderHidden();
-      //   divGallery.insertAdjacentHTML(
-      //     'beforeend',
-      //     `<p>We're sorry, but you've reached the end of search results.</p>`
-      //   );
     }
   } catch (error) {
     Notiflix.Notify.failure(

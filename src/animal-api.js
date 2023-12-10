@@ -36,10 +36,6 @@ export default class NewsApiService {
     this.page += 1;
   }
 
-  // getTotalHits() {
-  //   return (this.totalHits = data.totalHits);
-  // }
-
   resetPage() {
     this.page = 1;
   }
