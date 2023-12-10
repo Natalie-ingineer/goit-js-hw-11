@@ -1,6 +1,6 @@
 import NewsApiService from './animal-api';
 
-import Notiflix from 'notiflix';
+// import Notiflix from 'notiflix';
 
 import Notiflix from 'notiflix/dist/notiflix-aio-3.2.6.min.js';
 
@@ -68,16 +68,7 @@ loadMore.addEventListener('click', onLoadMore);
 let totalHits = 0;
 let hits = 0;
 
-searchForm.style.marginTop = '50px';
-searchForm.style.marginBotton = '50px';
-// searchForm.style.borderRadius = 'solid';
-body.style.background = 'lightyellow';
-searchForm.style.textAlign = 'center';
-
 loadMore.style.display = 'none';
-divGallery.style.display = 'flex';
-divGallery.style.flexWrap = 'wrap';
-divGallery.style.gap = '20px';
 
 async function handlerSearch(e) {
   e.preventDefault();
@@ -167,16 +158,16 @@ function renderMarkup(hits) {
     <img src="${webformatURL}" alt="${tags}" width = "250" loading="lazy" />
     <div class="info">
     <p class="info-item">
-    <b>Likes'${likes}'</b>
+    <b>Likes: ${likes}</b>
     </p>
     <p class="info-item">
-    <b>Views'${views}'</b>
+    <b>Views: ${views}</b>
       </p>
       <p class="info-item">
-        <b>Comments'${comments}'</b>
+        <b>Comments: ${comments}</b>
       </p>
       <p class="info-item">
-        <b>Downloads'${downloads}'</b>
+        <b>Downloads: ${downloads}</b>
       </p>
     </div>
     </div>`
