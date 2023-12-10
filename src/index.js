@@ -98,8 +98,8 @@ async function handlerSearch(e) {
       );
     }
 
-    // totalHits = await newsApiService.getTotalHits(); // Оновлення totalHits
-    totalHits = hits.length;
+    totalHits = await newsApiService.getTotalHits(); // Оновлення totalHits
+    // totalHits = hits.length;
     clearDivContainer();
     createMarkupAnimals(newHits);
     Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
