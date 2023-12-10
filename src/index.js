@@ -63,19 +63,20 @@ const newsApiService = new NewsApiService();
 
 searchForm.addEventListener('submit', handlerSearch);
 loadMore.addEventListener('click', onLoadMore);
-let currentPage = 1;
-let maxPages = 1;
+let totalHits = 1;
+let hits = 1;
+let page = 1;
 
 loadMore.style.display = 'none';
 
 async function handlerSearch(e) {
   e.preventDefault();
 
-  newsApiService.searchQuery = e.currentTarget.searchQuery.value;
+  newsApiService.animal = e.currentTarget.searchQuery.value;
 
   if (
-    newsApiService.searchQuery.trim() === '' ||
-    !/^[a-zA-Z]+$/.test(newsApiService.searchQuery)
+    newsApiService.animal.trim() === '' ||
+    !/^[a-zA-Z]+$/.test(newsApiService.animal)
   ) {
     onLoaderHidden();
     return Notiflix.Notify.failure(
@@ -110,56 +111,27 @@ async function handlerSearch(e) {
   }
 }
 
-// async function onLoadMore() {
-//   try {
-//     const newHits = await newsApiService.fetchHits();
-//     const newHitsCount = newHits.length;
-//     totalHits += newHitsCount;
-
-//     if (newHitsCount === 0) {
-//       onLoaderHidden();
-//       return;
-//     }
-
-//     createMarkupAnimals(newHits);
-//     hits += newHitsCount;
-
-//     Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
-
-//     if (hits < totalHits) {
-//       onLoaderVisible();
-//     } else if (hits >= totalHits || page === 1) {
-//       loadMore.style.display = 'none';
-//       // onLoaderHidden();
-//       divGallery.insertAdjacentHTML(
-//         'beforeend',
-//         `<p>We're sorry, but you've reached the end of search results.</p>`
-//       );
-//     }
-//   } catch (error) {
-//     Notiflix.Notify.failure(
-//       'Sorry, there are no images matching your search query. Please try again.'
-//     );
-//   }
-// }
 async function onLoadMore() {
   try {
-    const { totalHits, hits } = await newsApiService.fetchHits(currentPage);
+    const newHits = await newsApiService.fetchHits();
+    const newHitsCount = newHits.length;
+    totalHits += newHitsCount;
 
-    maxPages = Math.ceil(totalHits / 40);
-
-    if (currentPage === 1) {
-      // Показати кнопку при першому запиті
-      loadMoreButton.style.display = 'block';
+    if (newHitsCount === 0) {
+      onLoaderHidden();
+      return;
     }
 
-    createMarkupAnimals(hits);
+    createMarkupAnimals(newHits);
+    hits += newHitsCount;
 
-    if (currentPage < maxPages) {
-      currentPage++;
-    } else {
-      // Якщо досягнуто кінця колекції, ховати кнопку та виводити повідомлення
-      loadMoreButton.style.display = 'none';
+    Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
+
+    if (hits < totalHits) {
+      onLoaderVisible();
+    } else if (hits >= totalHits || page === 1) {
+      loadMore.style.display = 'none';
+      // onLoaderHidden();
       divGallery.insertAdjacentHTML(
         'beforeend',
         `<p>We're sorry, but you've reached the end of search results.</p>`
