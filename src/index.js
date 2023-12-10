@@ -88,7 +88,6 @@ async function handlerSearch(e) {
 
   try {
     const newHits = await newsApiService.fetchHits();
-
     if (newHits.length === 0) {
       onLoaderHidden();
       return Notiflix.Notify.failure(
@@ -114,28 +113,37 @@ async function handlerSearch(e) {
 async function onLoadMore() {
   try {
     const newHits = await newsApiService.fetchHits();
-    const newHitsCount = newHits.length;
+
+    let newHitsCount = Number(newHits.length);
+    console.log(newHitsCount);
     totalHits += newHitsCount;
+    console.log(totalHits);
 
-    if (newHitsCount === 0) {
-      onLoaderHidden();
-      return;
-    }
-
-    createMarkupAnimals(newHits);
-    hits += newHitsCount;
-
-    Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
-
-    if (hits < totalHits) {
-      onLoaderVisible();
-    } else if (hits >= totalHits || page === 1) {
-      loadMore.style.display = 'none';
+    if (newHitsCount === 0 || totalHits >= 500) {
       // onLoaderHidden();
+      loadMore.style.display = 'none';
       divGallery.insertAdjacentHTML(
         'beforeend',
         `<p>We're sorry, but you've reached the end of search results.</p>`
       );
+      return;
+    }
+
+    createMarkupAnimals(newHits);
+    // hits += newHitsCount;
+    // console.log(hits);
+
+    Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
+
+    if (newHitsCount < totalHits) {
+      onLoaderVisible();
+      // } else if (newHitsCount === totalHits || page === 1) {
+      //   loadMore.style.display = 'none';
+      //   // onLoaderHidden();
+      //   divGallery.insertAdjacentHTML(
+      //     'beforeend',
+      //     `<p>We're sorry, but you've reached the end of search results.</p>`
+      //   );
     }
   } catch (error) {
     Notiflix.Notify.failure(
