@@ -9,7 +9,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: #f5d6d6;
+  background-color: #fff;
 }
 
 .search-form {
@@ -62,4 +62,58 @@ body {
   margin-bottom: 25px;
   margin-left: auto;
   margin-right: auto;
+}
+/* Стилі для кнопки "Load more" */
+.load-more {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: 2px solid #3498db; /* Колір рамки кнопки */
+  color: #3498db; /* Колір тексту кнопки */
+  border-radius: 5px; /* Закруглені кути */
+  transition: background-color 0.3s ease; /* Плавна зміна колірного фону при наведенні */
+}
+
+/* Зміна колірів при наведенні */
+.load-more:hover {
+  background-color: #3498db; /* Новий колір фону при наведенні */
+  color: #fff; /* Новий колір тексту при наведенні */
+}
+
+/* Стилі для форми пошуку */
+.search-form {
+  display: flex;
+  max-width: 300px; /* Задайте максимальну ширину форми */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Стилі для інпута в формі */
+.search-form input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #3498db; /* Колір рамки інпута */
+  border-radius: 5px 0 0 5px; /* Закруглені кути тільки зліва */
+}
+
+/* Стилі для кнопки в формі */
+.search-form button {
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 2px solid #3498db; /* Колір рамки кнопки */
+  border-radius: 0 5px 5px 0; /* Закруглені кути тільки справа */
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Плавна зміна колірного фону при наведенні */
+}
+
+/* Зміна колірів при наведенні на кнопку */
+.search-form button:hover {
+  background-color: #3498db; /* Новий колір фону при наведенні */
+  color: #fff; /* Новий колір тексту при наведенні */
 }

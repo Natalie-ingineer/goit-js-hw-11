@@ -4,7 +4,7 @@ import Notiflix from 'notiflix/dist/notiflix-aio-3.2.6.min.js';
 
 Notiflix.Notify.init({
   width: '280px',
-  position: 'right-top', // 'right-top' - 'right-bottom' - 'left-top' - 'left-bottom' - 'center-top' - 'center-bottom' - 'center-center'
+  position: 'left-top', // 'right-top' - 'right-bottom' - 'left-top' - 'left-bottom' - 'center-top' - 'center-bottom' - 'center-center'
   distance: '10px',
   opacity: 1,
   borderRadius: '5px',
@@ -25,7 +25,7 @@ Notiflix.Notify.init({
   fontSize: '13px',
   cssAnimation: true,
   cssAnimationDuration: 400,
-  cssAnimationStyle: 'fade', // 'fade' - 'zoom' - 'from-right' - 'from-top' - 'from-bottom' - 'from-left'
+  cssAnimationStyle: 'from-right', // 'fade' - 'zoom' - 'from-right' - 'from-top' - 'from-bottom' - 'from-left'
   closeButton: false,
   useIcon: true,
   useFontAwesome: false,
@@ -50,6 +50,15 @@ Notiflix.Notify.init({
     fontAwesomeClassName: 'fas fa-times-circle',
     fontAwesomeIconColor: 'rgba(0,0,0,0.2)',
     backOverlayColor: 'rgba(255,85,73,0.2)',
+  },
+  warning: {
+    background: '#eebf31',
+    textColor: '#fff',
+    childClassName: 'notiflix-notify-warning',
+    notiflixIconColor: 'rgba(0,0,0,0.2)',
+    fontAwesomeClassName: 'fas fa-exclamation-circle',
+    fontAwesomeIconColor: 'rgba(0,0,0,0.2)',
+    backOverlayColor: 'rgba(238,191,49,0.2)',
   },
 });
 
@@ -120,9 +129,8 @@ async function onLoadMore() {
 
     if (newHitsCount === 0 || totalHits >= 500) {
       loadMore.style.display = 'none';
-      divGallery.insertAdjacentHTML(
-        'beforeend',
-        `<p>We're sorry, but you've reached the end of search results.</p>`
+      Notiflix.Notify.warning(
+        "We're sorry, but you've reached the end of search results."
       );
       return;
     }
