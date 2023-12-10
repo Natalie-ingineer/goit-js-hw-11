@@ -62,6 +62,10 @@ Notiflix.Notify.init({
   },
 });
 
+import SimpleLightbox from 'simplelightbox';
+
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 const body = document.querySelector('body');
 const searchForm = document.querySelector('.search-form');
 const btnSubmit = document.querySelector('button');
@@ -75,11 +79,17 @@ loadMore.addEventListener('click', onLoadMore);
 let totalHits = 1;
 let hits = 1;
 let page = 1;
+let lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 loadMore.style.display = 'none';
 
 async function handlerSearch(e) {
   e.preventDefault();
+
+  divGallery.innerHTML = '';
 
   newsApiService.animal = e.currentTarget.searchQuery.value;
 
@@ -116,6 +126,7 @@ async function handlerSearch(e) {
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
+  lightbox.refresh();
 }
 
 async function onLoadMore() {
@@ -147,6 +158,7 @@ async function onLoadMore() {
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
+  lightbox.refresh();
 }
 
 function renderMarkup(hits) {
@@ -161,6 +173,7 @@ function renderMarkup(hits) {
         comments,
         downloads,
       }) => `<div class="photo-card">
+      <a href="${largeImageURL}">
     <img src="${webformatURL}" alt="${tags}" width = "250" loading="lazy" />
     <div class="info">
     <p class="info-item">
@@ -176,6 +189,7 @@ function renderMarkup(hits) {
         <b>Downloads: ${downloads}</b>
       </p>
     </div>
+    <a>
     </div>`
     )
     .join('');
