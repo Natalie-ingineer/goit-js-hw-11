@@ -65,8 +65,9 @@ const newsApiService = new NewsApiService();
 
 searchForm.addEventListener('submit', handlerSearch);
 loadMore.addEventListener('click', onLoadMore);
-let totalHits = 0;
-let hits = 0;
+let totalHits = 1;
+let hits = 1;
+let page = 1;
 
 loadMore.style.display = 'none';
 
@@ -97,8 +98,10 @@ async function handlerSearch(e) {
       );
     }
 
-    totalHits = await newsApiService.getTotalHits(); // Оновлення totalHits
-    // totalHits = hits.length;
+    // totalHits = await newsApiService.getTotalHits(); // Оновлення totalHits
+    totalHits = newHits.length * page;
+    console.log(totalHits);
+
     clearDivContainer();
     createMarkupAnimals(newHits);
     Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
@@ -126,15 +129,15 @@ async function onLoadMore() {
 
     Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
 
-    if (hits < 500) {
+    if (hits < totalHits) {
       onLoaderVisible();
-    } else {
-      onLoaderHidden();
+    } else if (hits >= totalHits || page === 1) {
+      loadMore.style.display = 'none';
+      // onLoaderHidden();
       divGallery.insertAdjacentHTML(
         'beforeend',
         `<p>We're sorry, but you've reached the end of search results.</p>`
       );
-      loadMore.style.display = 'none';
     }
   } catch (error) {
     Notiflix.Notify.failure(
