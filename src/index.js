@@ -51,6 +51,7 @@ async function handlerSearch(e) {
     clearDivContainer();
     createMarkupAnimals(newHits);
     success(totalHits);
+    loadMore.style.display = 'block';
   } catch (error) {
     error(error.message);
   }
@@ -73,10 +74,10 @@ async function onLoadMore() {
     }
 
     createMarkupAnimals(newHits);
-    success();
+    success(totalHits);
 
     if (newHitsCount < totalHits) {
-      onLoaderVisible();
+      loadMore.style.display = 'block';
     }
   } catch (error) {
     error(error.message);
