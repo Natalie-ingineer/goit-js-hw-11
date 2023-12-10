@@ -98,7 +98,8 @@ async function handlerSearch(e) {
       );
     }
 
-    totalHits = await newsApiService.getTotalHits(); // Оновлення totalHits
+    // totalHits = await newsApiService.getTotalHits(); // Оновлення totalHits
+    totalHits = hits.length;
     clearDivContainer();
     createMarkupAnimals(newHits);
     Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
@@ -125,7 +126,8 @@ async function onLoadMore() {
     hits += newHitsCount;
 
     Notiflix.Notify.success(`✅ Hooray! We found ${totalHits} images.`);
-    if (hits < totalHits) {
+
+    if (hits < 500) {
       onLoaderVisible();
     } else {
       onLoaderHidden();
@@ -133,6 +135,7 @@ async function onLoadMore() {
         'beforeend',
         `<p>We're sorry, but you've reached the end of search results.</p>`
       );
+      loadMore.style.display = 'none';
     }
   } catch (error) {
     Notiflix.Notify.failure(
@@ -141,6 +144,54 @@ async function onLoadMore() {
   }
 }
 
+function renderMarkup(hits) {
+  return hits
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `<div class="photo-card">
+    <img src="${webformatURL}" alt="${tags}" width = "300" loading="lazy" />
+    <div class="info">
+    <p class="info-item">
+    <b>Likes'${likes}'</b>
+    </p>
+    <p class="info-item">
+    <b>Views'${views}'</b>
+      </p>
+      <p class="info-item">
+        <b>Comments'${comments}'</b>
+      </p>
+      <p class="info-item">
+        <b>Downloads'${downloads}'</b>
+      </p>
+    </div>
+    </div>`
+    )
+    .join('');
+}
+
+function createMarkupAnimals(hits) {
+  divGallery.insertAdjacentHTML('beforeend', renderMarkup(hits));
+}
+
+function clearDivContainer() {
+  divGallery.innerHTML = '';
+}
+
+function onLoaderVisible() {
+  loadMore.style.display = 'block';
+}
+
+function onLoaderHidden() {
+  loadMore.style.display = 'none';
+}
+// -----------------------------------------------------------------------
 // async function handlerSearch(e) {
 //   e.preventDefault();
 
@@ -213,51 +264,3 @@ async function onLoadMore() {
 //     );
 //   }
 // }
-
-function renderMarkup(hits) {
-  return hits
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => `<div class="photo-card">
-    <img src="${webformatURL}" alt="${tags}" width = "300" loading="lazy" />
-    <div class="info">
-      <p class="info-item">
-        <b>Likes'${likes}'</b>
-      </p>
-      <p class="info-item">
-        <b>Views'${views}'</b>
-      </p>
-      <p class="info-item">
-        <b>Comments'${comments}'</b>
-      </p>
-      <p class="info-item">
-        <b>Downloads'${downloads}'</b>
-      </p>
-    </div>
-  </div>`
-    )
-    .join('');
-}
-
-function createMarkupAnimals(hits) {
-  divGallery.insertAdjacentHTML('beforeend', renderMarkup(hits));
-}
-
-function clearDivContainer() {
-  divGallery.innerHTML = '';
-}
-
-function onLoaderVisible() {
-  loadMore.style.display = 'block';
-}
-
-function onLoaderHidden() {
-  loadMore.style.display = 'none';
-}

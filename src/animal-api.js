@@ -7,7 +7,7 @@ export default class NewsApiService {
   constructor() {
     this.searchAnimal = '';
     this.page = 1;
-    this.per_page = 40;
+    this.per_page = 100;
   }
 
   async fetchHits() {
