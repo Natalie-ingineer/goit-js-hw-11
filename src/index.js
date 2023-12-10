@@ -1,7 +1,5 @@
 import NewsApiService from './animal-api';
 
-// import Notiflix from 'notiflix';
-
 import Notiflix from 'notiflix/dist/notiflix-aio-3.2.6.min.js';
 
 Notiflix.Notify.init({
