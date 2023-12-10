@@ -55,6 +55,7 @@ Notiflix.Notify.init({
   },
 });
 
+const body = document.querySelector('body');
 const searchForm = document.querySelector('.search-form');
 const btnSubmit = document.querySelector('button');
 const loadMore = document.querySelector('.load-more');
@@ -67,9 +68,16 @@ loadMore.addEventListener('click', onLoadMore);
 let totalHits = 0;
 let hits = 0;
 
+searchForm.style.marginTop = '50px';
+searchForm.style.marginBotton = '50px';
+// searchForm.style.borderRadius = 'solid';
+body.style.background = 'lightyellow';
+searchForm.style.textAlign = 'center';
+
 loadMore.style.display = 'none';
 divGallery.style.display = 'flex';
 divGallery.style.flexWrap = 'wrap';
+divGallery.style.gap = '20px';
 
 async function handlerSearch(e) {
   e.preventDefault();
@@ -156,7 +164,7 @@ function renderMarkup(hits) {
         comments,
         downloads,
       }) => `<div class="photo-card">
-    <img src="${webformatURL}" alt="${tags}" width = "300" loading="lazy" />
+    <img src="${webformatURL}" alt="${tags}" width = "250" loading="lazy" />
     <div class="info">
     <p class="info-item">
     <b>Likes'${likes}'</b>
