@@ -17,8 +17,8 @@ const newsApiService = new NewsApiService();
 searchForm.addEventListener('submit', handlerSearch);
 loadMore.addEventListener('click', onLoadMore);
 let totalHits = 1;
-let hits = 1;
 let page = 1;
+let maxPage;
 
 loadMore.style.display = 'none';
 
@@ -41,6 +41,7 @@ async function handlerSearch(e) {
 
   try {
     const newHits = await newsApiService.fetchHits();
+
     if (newHits.length === 0) {
       onLoaderHidden();
       return error();
@@ -52,6 +53,11 @@ async function handlerSearch(e) {
     createMarkupAnimals(newHits);
     success(totalHits);
     loadMore.style.display = 'block';
+
+    if (newHits.length < 40) {
+      loadMore.style.display = 'none';
+      warning();
+    }
   } catch (error) {
     error(error.message);
   }
@@ -59,7 +65,6 @@ async function handlerSearch(e) {
 }
 
 async function onLoadMore() {
-  console.log('buy');
   try {
     const newHits = await newsApiService.fetchHits();
 
@@ -67,7 +72,7 @@ async function onLoadMore() {
 
     totalHits += newHitsCount;
 
-    if (newHitsCount === 0 || totalHits >= 500) {
+    if (newHitsCount === 0 || totalHits >= 500 || newHitsCount < 40) {
       loadMore.style.display = 'none';
       warning();
       return;
