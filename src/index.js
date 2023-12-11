@@ -25,14 +25,13 @@ loadMore.style.display = 'none';
 async function handlerSearch(e) {
   e.preventDefault();
 
-  // divGallery.innerHTML = '';
-
   newsApiService.animal = e.currentTarget.searchQuery.value;
 
   if (
     newsApiService.animal.trim() === '' ||
     !/^[a-zA-Z]+$/.test(newsApiService.animal)
   ) {
+    divGallery.innerHTML = '';
     onLoaderHidden();
     return error();
   }
