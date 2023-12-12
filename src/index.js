@@ -71,14 +71,14 @@ async function onLoadMore() {
 
     totalHits += newHitsCount;
 
+    createMarkupAnimals(newHits);
+    success(totalHits);
+
     if (newHitsCount === 0 || totalHits >= 500 || newHitsCount < 40) {
       loadMore.style.display = 'none';
       warning();
       return;
     }
-
-    createMarkupAnimals(newHits);
-    success(totalHits);
 
     if (newHitsCount < totalHits) {
       loadMore.style.display = 'block';
